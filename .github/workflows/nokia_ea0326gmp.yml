@@ -8,7 +8,7 @@
 # Description: Build OpenWrt using GitHub Actions
 #
 
-name: Build openwrt_x86
+name: Build nokia_ea0326gmp
 
 on:
   repository_dispatch:
@@ -22,19 +22,19 @@ on:
  
 
 env:
-  REPO_URL: https://github.com/coolsnowwolf/lede
-  REPO_BRANCH: master
+  REPO_URL: https://github.com/zikura88/immortalwrt-mt798x
+  REPO_BRANCH: openwrt-21.02
   FEEDS_CONF: feeds.conf.default
-  CONFIG_FILE: openwrt_x86_240301.config
+  CONFIG_FILE: ea0326gmp.config
   DIY_P1_SH: diy-part1.sh
-  DIY_P3_SH: diy-part3.sh
+  DIY_P2_SH: diy-part2.sh
   TZ: Asia/Shanghai
-  DEVICE: openwrt_x86
+  DEVICE: nokia_e0326gmp
   UPLOAD_OUTPUT: true
 
 jobs:
-   _build_openwrt_x86:
-    runs-on: ubuntu-22.04
+   _ea0326gmp:
+    runs-on: ubuntu-20.04
     permissions:
       contents: write
 
@@ -68,11 +68,7 @@ jobs:
       run: |
         sudo rm -rf /etc/apt/sources.list.d/* /usr/share/dotnet /usr/local/lib/android /opt/ghc
         sudo -E apt-get -qq update
-        sudo -E apt-get -qq install build-essential clang llvm flex g++ gawk gcc-multilib gettext \
-        git libncurses5-dev libssl-dev python3-distutils python3-pyelftools python3-setuptools \
-        libpython3-dev rsync unzip zlib1g-dev swig aria2 jq subversion qemu-utils ccache rename \
-        libelf-dev device-tree-compiler libgnutls28-dev coccinelle libgmp3-dev libmpc-dev
-        sudo -E apt-get -qq purge azure-cli ghc* zulu* firefox powershell openjdk* dotnet* google* mysql* php* android*
+        sudo -E apt-get -qq install $(curl -fsSL git.io/depends-ubuntu-2004)
         sudo -E apt-get -qq autoremove --purge
         sudo -E apt-get -qq clean
         sudo timedatectl set-timezone "$TZ"
@@ -101,12 +97,11 @@ jobs:
 
     - name: Load custom configuration
       run: |
-        [ -e $CONFIG_FILE ] && mv $CONFIG_FILE openwrt/.config
-        chmod +x $DIY_P3_SH
-        cd openwrt
-        $GITHUB_WORKSPACE/$DIY_P3_SH
-        [ -e files ] && mv files openwrt/files
         
+        [ -e $CONFIG_FILE ] && mv $CONFIG_FILE openwrt/.config
+        chmod +x $DIY_P2_SH
+        cd openwrt
+        $GITHUB_WORKSPACE/$DIY_P2_SH
       
     - name: SSH connection to Actions
       uses: P3TERX/ssh2actions@v1.0.0
