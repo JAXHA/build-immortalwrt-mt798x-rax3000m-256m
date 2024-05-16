@@ -19,6 +19,9 @@
 # 预置openclash内核
 # mkdir -p files/etc/openclash/core
 
+# 修改v2ray-core错误编译
+sed -i 's/PKG_USE_MIPS16/PKG_BUILD_FLAGS:=no-mips16\nPKG_USE_MIPS16/' feeds/packages/net/v2ray-plugin/Makefile
+sed -i 's/PKG_USE_MIPS16/PKG_BUILD_FLAGS:=no-mips16\nPKG_USE_MIPS16/' package/feeds/packages/v2ray-plugin/Makefile
 
 # dev内核
 CLASH_DEV_URL="https://github.com/vernesong/OpenClash/raw/core/dev/dev/clash-linux-amd64.tar.gz"
